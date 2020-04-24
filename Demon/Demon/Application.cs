@@ -43,6 +43,11 @@ namespace Demon
         {
             Console.Clear();
             Console.WriteLine("Klikni '1' pro manuální registraci nebo '2' pro vyvolání aktualizace dat");
+
+            if (this.connector.MyClient != null)
+            {
+                Console.WriteLine(this.connector.MyClient.Name + ", " + this.connector.MyClient.MAC);
+            }
         }
     }
 }

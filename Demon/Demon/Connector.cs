@@ -12,7 +12,7 @@ namespace Demon
 {
     public class Connector
     {
-        private Client MyClient { get; set; }
+        public Client MyClient { get; set; }
 
         private string ApiString { get; set; } = "http://localhost:49497/api/";
 
@@ -20,11 +20,15 @@ namespace Demon
         {
             using (var client = new WebClient())
             {
-                client.Headers.Add("Content-Type:application/json");
-                client.Headers.Add("Accept:application/json");
-                string json = client.DownloadString(ApiString + "/query/getclient/" + this.GetMACAdress());
-                var dynamicJson = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(json);
-                this.MyClient = new Client(dynamicJson[0]);
+                try
+                {
+                    client.Headers.Add("Content-Type:application/json");
+                    client.Headers.Add("Accept:application/json");
+                    string json = client.DownloadString(ApiString + "/query/getclient/" + this.GetMACAdress());
+                    var dynamicJson = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(json);
+                    this.MyClient = new Client(dynamicJson[0]);
+                }
+                catch {}
             }
         }
 
