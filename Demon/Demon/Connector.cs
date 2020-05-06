@@ -1,5 +1,7 @@
-﻿using Demon.Models;
+﻿using Demon.Backups;
+using Demon.Models;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,13 +12,19 @@ using System.Threading.Tasks;
 
 namespace Demon
 {
-    public class Connector
+    public static class Connector
     {
-        public Client MyClient { get; set; }
+        public static string ApiString { get; } = "http://localhost:49497/api/";
 
-        private string ApiString { get; set; } = "http://localhost:49497/api/";
+        public static string ClientString { get; set; } = "";
+        public static string Test = "";
 
-        public void Update()
+        static Connector()
+        {
+            Random randon = new Random();
+        }
+
+        public static void UpdateClient(Client Client)
         {
             using (var client = new WebClient())
             {
@@ -24,15 +32,19 @@ namespace Demon
                 {
                     client.Headers.Add("Content-Type:application/json");
                     client.Headers.Add("Accept:application/json");
-                    string json = client.DownloadString(ApiString + "/query/getclient/" + this.GetMACAdress());
-                    var dynamicJson = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(json);
-                    this.MyClient = new Client(dynamicJson[0]);
+                    string jsonString = client.DownloadString(ApiString + "/query/getclient/" + Connector.GetMACAdress());
+                    var json = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(jsonString)[0];
+                    Client = new Client(json);
+                    Connector.ClientString = "Name: " + json["Name"] + ", MAC: " + json["MAC"] + ", Date of login: " + json["DateOfLogin"];
                 }
-                catch {}
+                catch 
+                {
+                    Connector.ClientString = "Client Neexistuje";
+                }
             }
         }
 
-        public void Register()
+        public static void Register()
         {
             using (var client = new WebClient())
             {
@@ -41,21 +53,21 @@ namespace Demon
 
                 Client cl = new Client()
                 {
-                    Name = this.GetPCName(),
-                    MAC = this.GetMACAdress(),
+                    Name = Connector.GetPCName(),
+                    MAC = Connector.GetMACAdress(),
                     DateOfLogin  = null
                 };
 
-                var result = client.UploadString(this.ApiString + "client", JsonConvert.SerializeObject(cl));
+                var result = client.UploadString(ApiString + "client", JsonConvert.SerializeObject(cl));
             }
         }
 
-        private string GetPCName()
+        public static string GetPCName()
         {
             return Environment.MachineName.ToString();
         }
 
-        private string GetMACAdress()
+        public static string GetMACAdress()
         {
             foreach (var item in NetworkInterface.GetAllNetworkInterfaces())
             {
@@ -64,6 +76,34 @@ namespace Demon
                     return item.GetPhysicalAddress().ToString();
             }
             return "";
+        }
+
+        public static void GetMyJobs(List<BackupTemplate> Backups)
+        {
+            using (var client = new WebClient())
+            {
+                client.Headers.Add("Content-Type:application/json");
+                client.Headers.Add("Accept:application/json");
+                string jsonString = client.DownloadString(ApiString + "/query/GetMyJobs/" + Connector.GetMACAdress());
+                JArray json = JsonConvert.DeserializeObject<dynamic>(jsonString);
+
+                for (int i = 0; i < json.Count; i++)
+                {
+                    var configuration = json[i]["configuration"];
+                    switch ((string)configuration["BackupType"])
+                    {
+                        case "FULL":
+                            Backups.Add(new FullBackup(json[i]));
+                            break;
+                        case "INC":
+                            Backups.Add(new IncrementalBackup(json[i]));
+                            break;
+                        case "DIFF":
+                            Backups.Add(new DifferentialBackups(json[i]));
+                            break;
+                    }
+                }
+            }
         }
     }
 }

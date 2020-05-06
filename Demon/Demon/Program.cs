@@ -8,8 +8,6 @@ namespace Demon
         {
             Application app = new Application();
 
-            app.Start();
-
             Console.ReadKey();
         }
     }

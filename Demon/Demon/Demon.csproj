@@ -47,8 +47,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Application.cs" />
+    <Compile Include="Backups\BackupTemplate.cs" />
+    <Compile Include="Backups\DifferentialBackups.cs" />
+    <Compile Include="Backups\FullBackup.cs" />
+    <Compile Include="Backups\IncrementalBackup.cs" />
     <Compile Include="Connector.cs" />
     <Compile Include="Models\Client.cs" />
+    <Compile Include="Models\Configuration.cs" />
+    <Compile Include="Models\DestFtpServer.cs" />
+    <Compile Include="Models\DestLocal.cs" />
+    <Compile Include="Models\Job.cs" />
+    <Compile Include="Models\Schedule.cs" />
+    <Compile Include="Models\Source.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
