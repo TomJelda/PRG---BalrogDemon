@@ -27,10 +27,11 @@ namespace Demon.Models
 
         public bool CheckJob()
         {
-            return this.CheckCRON();
+            return true;
+            //return this.CheckCRON();
         }
 
-        private bool CheckCRON() // TODO
+        private bool CheckCRON() // TODO, timer, quards - knihovna
         {
             if (Configuration.Cron == "NOW")
                 return true;

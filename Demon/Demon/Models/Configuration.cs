@@ -21,6 +21,8 @@ namespace Demon.Models
 
         public int SavedBackupNumber { get; set; }
 
+        public int? IdConfigDiff { get; set; }
+
         public Configuration(JToken json)
         {
             this.Name = (string)json["Name"];
@@ -29,6 +31,7 @@ namespace Demon.Models
             this.Cron = (string)json["Cron"];
             this.RepeatableBackup = (bool)json["RepeatableBackup"];
             this.SavedBackupNumber = (int)json["SavedBackupNumber"];
+            this.IdConfigDiff = (int?)json["IdConfigDiff"];
         }
     }
 }

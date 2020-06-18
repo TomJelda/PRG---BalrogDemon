@@ -37,7 +37,7 @@ namespace Demon
                     switch (input)
                     {
                         case '1':
-                            Connector.Register();
+                            Connector.RegisterClient();
                             this.Menu();
                             break;
                         case '2':
@@ -49,7 +49,15 @@ namespace Demon
                             this.Menu();
                             break;
                         case '4':
-                            this.DoJobs();
+                            this.DoFull();
+                            this.Menu();
+                            break;
+                        case '5':
+                            this.DoDiff();
+                            this.Menu();
+                            break;
+                        case '6':
+                            this.DoInc();
                             this.Menu();
                             break;
                     }
@@ -57,12 +65,17 @@ namespace Demon
             }
         } 
 
+        public void MakeDiff()
+        {
+            //DifferentialBackups diff = new DifferentialBackups();
+        }
+
         private void Menu()
         {
             Console.Clear();
             Console.WriteLine("Klikni '1' pro manuální registraci nebo '2' pro vyvolání aktualizace dat");
             Console.WriteLine(Connector.ClientString);
-            Console.WriteLine(Connector.Test);
+            Console.WriteLine(Connector.test);
 
             if (this.Me != null)
             {
@@ -74,6 +87,24 @@ namespace Demon
         {
             foreach (var job in this.Backups)
                 job.DoJob();
+        }
+
+        private void DoFull()
+        {
+            this.Backups[0].DoJob();
+        }
+
+        private void DoDiff()
+        {
+            this.Backups[1].DoJob();
+        }
+
+        private void DoInc()
+        {
+            //this.Backups[0].DoJob();
+
+            IncrementalBackup diff = new IncrementalBackup(null);
+            diff.DOOT();
         }
     }
 }
